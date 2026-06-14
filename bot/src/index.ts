@@ -28,19 +28,26 @@ import {
 // ---------------------------------------------------------------------------
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const ALLOWED_USER_ID = process.env.TELEGRAM_USER_ID;
+const allowedUserIdsValue =
+  process.env.TELEGRAM_ALLOWED_USER_IDS || process.env.TELEGRAM_USER_ID;
 
 if (!BOT_TOKEN) {
   console.error("❌ TELEGRAM_BOT_TOKEN belum diset di .env");
   process.exit(1);
 }
 
-if (!ALLOWED_USER_ID) {
-  console.error("❌ TELEGRAM_USER_ID wajib diset agar bot hanya merespon akun Anda");
+if (!allowedUserIdsValue) {
+  console.error("❌ TELEGRAM_ALLOWED_USER_IDS wajib diset agar bot hanya merespon user terdaftar");
   process.exit(1);
 }
 
 const bot = new Bot(BOT_TOKEN);
+const allowedUserIds = new Set(
+  allowedUserIdsValue
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean)
+);
 
 // ---------------------------------------------------------------------------
 // State — Menyimpan transaksi yang belum dikonfirmasi
@@ -67,7 +74,7 @@ const pendingTransactions = new Map<number, PendingTransaction>();
 // ---------------------------------------------------------------------------
 
 bot.use(async (ctx, next) => {
-  if (ctx.from?.id.toString() !== ALLOWED_USER_ID) {
+  if (!ctx.from || !allowedUserIds.has(ctx.from.id.toString())) {
     await ctx.reply("⛔ Bot ini hanya untuk penggunaan pribadi.");
     return;
   }
@@ -322,6 +329,8 @@ bot.callbackQuery("confirm", async (ctx) => {
       description: pending.description,
       walletId: pending.walletId,
       categoryId: pending.categoryId,
+      createdByTelegramId: ctx.from?.id.toString(),
+      createdByName: formatTelegramName(ctx),
     });
 
     pendingTransactions.delete(chatId);
@@ -540,6 +549,13 @@ async function showPreview(ctx: Context, pending: PendingTransaction) {
 
 function escMd(text: string): string {
   return text.replace(/([_*\[\]()~`>#+\-=|{}.!\\])/g, "\\$1");
+}
+
+function formatTelegramName(ctx: Context): string | undefined {
+  const from = ctx.from;
+  if (!from) return undefined;
+  if (from.username) return `@${from.username}`;
+  return [from.first_name, from.last_name].filter(Boolean).join(" ") || String(from.id);
 }
 
 // ---------------------------------------------------------------------------

@@ -99,6 +99,8 @@ export const api = {
     walletId: string;
     toWalletId?: string;
     categoryId?: string;
+    createdByTelegramId?: string;
+    createdByName?: string;
   }) =>
     request<ApiResponse<any>>("/api/transactions", {
       method: "POST",

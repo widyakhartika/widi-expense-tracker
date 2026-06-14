@@ -32,6 +32,14 @@ export class CreateTransactionDto {
   @IsArray()
   @IsString({ each: true })
   tags?: string[];
+
+  @IsOptional()
+  @IsString()
+  createdByTelegramId?: string;
+
+  @IsOptional()
+  @IsString()
+  createdByName?: string;
 }
 
 export class UpdateTransactionDto {

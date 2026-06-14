@@ -78,7 +78,7 @@ Root `.env`:
 DB_PASSWORD=...
 API_KEY=...
 TELEGRAM_BOT_TOKEN=...
-TELEGRAM_USER_ID=...
+TELEGRAM_ALLOWED_USER_IDS=8092244206,413201857
 FRONTEND_URL=http://localhost:3000
 API_URL=http://localhost:3001
 ```
@@ -104,7 +104,7 @@ Bot hanya berjalan jika dua environment ini terisi:
 
 ```env
 TELEGRAM_BOT_TOKEN=token-baru-dari-botfather
-TELEGRAM_USER_ID=id-telegram-anda
+TELEGRAM_ALLOWED_USER_IDS=id-telegram-anda,id-telegram-user-kedua
 ```
 
 Contoh input:

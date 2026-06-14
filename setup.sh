@@ -19,7 +19,7 @@ if [ ! -f .env ]; then
   APP_KEY=$(openssl rand -hex 32 2>/dev/null || echo "apikey_$(date +%s)")
   sed -i "s/ganti_password_kuat_disini/$DB_PASS/" .env
   sed -i "s/ganti_dengan_key_kuat/$APP_KEY/" .env
-  echo ".env dibuat. Isi TELEGRAM_BOT_TOKEN dan TELEGRAM_USER_ID sebelum menjalankan bot."
+  echo ".env dibuat. Isi TELEGRAM_BOT_TOKEN dan TELEGRAM_ALLOWED_USER_IDS sebelum menjalankan bot."
 fi
 
 set -a
@@ -41,7 +41,7 @@ EOF
 
 cat > bot/.env <<EOF
 TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN}"
-TELEGRAM_USER_ID="${TELEGRAM_USER_ID}"
+TELEGRAM_ALLOWED_USER_IDS="${TELEGRAM_ALLOWED_USER_IDS:-${TELEGRAM_USER_ID:-}}"
 API_BASE_URL="http://localhost:3001"
 API_KEY="${API_KEY}"
 EOF

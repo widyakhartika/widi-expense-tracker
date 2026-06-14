@@ -128,6 +128,7 @@ export default function TransactionsPage() {
                         {formatTime(tx.date)} • {tx.wallet?.name || ""}
                         {tx.toWallet ? ` → ${tx.toWallet.name}` : ""}
                         {tx.category ? ` • ${tx.category.name}` : ""}
+                        {tx.createdByName ? ` • oleh ${tx.createdByName}` : ""}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">

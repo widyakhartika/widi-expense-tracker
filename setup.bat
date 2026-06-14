@@ -25,7 +25,7 @@ if %NODE_MAJOR% LSS 20 (
 if not exist ".env" (
   copy .env.example .env >nul
   echo .env dibuat dari template.
-  echo Edit .env sekarang untuk isi DB_PASSWORD, API_KEY, TELEGRAM_BOT_TOKEN, dan TELEGRAM_USER_ID.
+  echo Edit .env sekarang untuk isi DB_PASSWORD, API_KEY, TELEGRAM_BOT_TOKEN, dan TELEGRAM_ALLOWED_USER_IDS.
   pause
 )
 
@@ -33,8 +33,11 @@ for /f "usebackq tokens=1,2 delims==" %%a in (".env") do (
   if "%%a"=="DB_PASSWORD" set DB_PASSWORD=%%b
   if "%%a"=="API_KEY" set API_KEY=%%b
   if "%%a"=="TELEGRAM_BOT_TOKEN" set TELEGRAM_BOT_TOKEN=%%b
+  if "%%a"=="TELEGRAM_ALLOWED_USER_IDS" set TELEGRAM_ALLOWED_USER_IDS=%%b
   if "%%a"=="TELEGRAM_USER_ID" set TELEGRAM_USER_ID=%%b
 )
+
+if "%TELEGRAM_ALLOWED_USER_IDS%"=="" set TELEGRAM_ALLOWED_USER_IDS=%TELEGRAM_USER_ID%
 
 (
   echo DATABASE_URL="postgresql://widi:%DB_PASSWORD%@localhost:5432/expense_tracker"
@@ -51,7 +54,7 @@ for /f "usebackq tokens=1,2 delims==" %%a in (".env") do (
 
 (
   echo TELEGRAM_BOT_TOKEN="%TELEGRAM_BOT_TOKEN%"
-  echo TELEGRAM_USER_ID="%TELEGRAM_USER_ID%"
+  echo TELEGRAM_ALLOWED_USER_IDS="%TELEGRAM_ALLOWED_USER_IDS%"
   echo API_BASE_URL="http://localhost:3001"
   echo API_KEY="%API_KEY%"
 ) > bot\.env

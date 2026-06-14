@@ -60,6 +60,8 @@ export class TransactionsService {
           toWalletId: dto.type === TransactionType.TRANSFER ? dto.toWalletId : null,
           categoryId: dto.type === TransactionType.TRANSFER ? null : dto.categoryId,
           tags: dto.tags || [],
+          createdByTelegramId: dto.createdByTelegramId,
+          createdByName: dto.createdByName,
         },
         include: { wallet: true, toWallet: true, category: true },
       });

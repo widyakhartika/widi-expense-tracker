@@ -96,6 +96,8 @@ export class SummaryService {
           toWalletName: transaction.toWallet?.name,
           categoryName: transaction.category?.name,
           categoryIcon: transaction.category?.icon,
+          createdByTelegramId: transaction.createdByTelegramId,
+          createdByName: transaction.createdByName,
         })),
       },
     };

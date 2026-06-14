@@ -43,7 +43,7 @@ services:
       - backend
     environment:
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?TELEGRAM_BOT_TOKEN wajib diisi}
-      TELEGRAM_USER_ID: ${TELEGRAM_USER_ID:?TELEGRAM_USER_ID wajib diisi}
+      TELEGRAM_ALLOWED_USER_IDS: ${TELEGRAM_ALLOWED_USER_IDS:?TELEGRAM_ALLOWED_USER_IDS wajib diisi}
       API_BASE_URL: http://backend:3001
       API_KEY: ${API_KEY:?API_KEY wajib diisi}
 

@@ -64,6 +64,8 @@ model Transaction {
   description String?
   date        DateTime        @default(now())
   tags        String[]        @default([])
+  createdByTelegramId String? @map("created_by_telegram_id")
+  createdByName       String? @map("created_by_name")
 
   walletId String @map("wallet_id")
   wallet   Wallet @relation("FromWallet", fields: [walletId], references: [id], onDelete: Restrict)
@@ -82,5 +84,6 @@ model Transaction {
   @@index([categoryId])
   @@index([date])
   @@index([type])
+  @@index([createdByTelegramId])
   @@map("transactions")
 }

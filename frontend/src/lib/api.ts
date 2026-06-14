@@ -44,6 +44,8 @@ export interface Transaction {
   wallet?: Wallet;
   toWallet?: Wallet;
   category?: Category;
+  createdByTelegramId?: string;
+  createdByName?: string;
 }
 
 export interface DashboardData {
@@ -69,6 +71,8 @@ export interface DashboardData {
     toWalletName?: string;
     categoryName: string;
     categoryIcon: string;
+    createdByTelegramId?: string;
+    createdByName?: string;
   }>;
 }
 

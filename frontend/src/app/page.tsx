@@ -203,6 +203,7 @@ export default function Dashboard() {
                   <p className="text-[10px] text-slate-400">
                     {formatDateShort(tx.date)} • {tx.walletName}
                     {tx.toWalletName ? ` → ${tx.toWalletName}` : ""}
+                    {tx.createdByName ? ` • oleh ${tx.createdByName}` : ""}
                   </p>
                 </div>
                 <p
