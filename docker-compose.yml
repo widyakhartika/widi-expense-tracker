@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: widi-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: widi
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD wajib diisi}
+      POSTGRES_DB: expense_tracker
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U widi -d expense_tracker"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: widi-backend
+    restart: unless-stopped
+    profiles: ["prod"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://widi:${DB_PASSWORD}@db:5432/expense_tracker
+      API_KEY: ${API_KEY:?API_KEY wajib diisi}
+      PORT: 3001
+      NODE_ENV: production
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+    ports:
+      - "3001:3001"
+
+  bot:
+    build: ./bot
+    container_name: widi-bot
+    restart: unless-stopped
+    profiles: ["prod"]
+    depends_on:
+      - backend
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?TELEGRAM_BOT_TOKEN wajib diisi}
+      TELEGRAM_USER_ID: ${TELEGRAM_USER_ID:?TELEGRAM_USER_ID wajib diisi}
+      API_BASE_URL: http://backend:3001
+      API_KEY: ${API_KEY:?API_KEY wajib diisi}
+
+  frontend:
+    build: ./frontend
+    container_name: widi-frontend
+    restart: unless-stopped
+    profiles: ["prod"]
+    depends_on:
+      - backend
+    environment:
+      API_URL: http://backend:3001
+      API_KEY: ${API_KEY:?API_KEY wajib diisi}
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+    driver: local

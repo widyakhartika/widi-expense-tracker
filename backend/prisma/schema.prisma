@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+enum WalletType {
+  CASH
+  BANK
+  EWALLET
+  DIGITAL_BANK
+}
+
+model Wallet {
+  id             String     @id @default(cuid())
+  name           String     @unique
+  type           WalletType
+  balance        Decimal    @default(0) @db.Decimal(15, 2)
+  openingBalance Decimal    @default(0) @map("opening_balance") @db.Decimal(15, 2)
+  icon           String?
+  color          String?
+  isActive       Boolean    @default(true) @map("is_active")
+  sortOrder      Int        @default(0) @map("sort_order")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+
+  transactionsFrom Transaction[] @relation("FromWallet")
+  transactionsTo   Transaction[] @relation("ToWallet")
+
+  @@index([isActive, sortOrder])
+  @@map("wallets")
+}
+
+model Category {
+  id        String          @id @default(cuid())
+  name      String
+  type      TransactionType
+  icon      String?
+  color     String?
+  isDefault Boolean         @default(false) @map("is_default")
+  sortOrder Int             @default(0) @map("sort_order")
+  createdAt DateTime        @default(now()) @map("created_at")
+
+  transactions Transaction[]
+
+  @@unique([name, type])
+  @@index([type, sortOrder])
+  @@map("categories")
+}
+
+model Transaction {
+  id          String          @id @default(cuid())
+  type        TransactionType
+  amount      Decimal         @db.Decimal(15, 2)
+  description String?
+  date        DateTime        @default(now())
+  tags        String[]        @default([])
+
+  walletId String @map("wallet_id")
+  wallet   Wallet @relation("FromWallet", fields: [walletId], references: [id], onDelete: Restrict)
+
+  toWalletId String? @map("to_wallet_id")
+  toWallet   Wallet? @relation("ToWallet", fields: [toWalletId], references: [id], onDelete: Restrict)
+
+  categoryId String?   @map("category_id")
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([walletId])
+  @@index([toWalletId])
+  @@index([categoryId])
+  @@index([date])
+  @@index([type])
+  @@map("transactions")
+}
